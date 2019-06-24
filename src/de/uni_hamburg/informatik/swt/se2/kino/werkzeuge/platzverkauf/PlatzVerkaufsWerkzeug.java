@@ -2,6 +2,7 @@ package de.uni_hamburg.informatik.swt.se2.kino.werkzeuge.platzverkauf;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.List;
 import java.util.Set;
 
 import javax.swing.JPanel;
@@ -15,11 +16,10 @@ import de.uni_hamburg.informatik.swt.se2.kino.materialien.Vorstellung;
  * auf einer Vorstellung als Material. Mit ihm kann angezeigt werden, welche
  * Plätze schon verkauft und welche noch frei sind.
  * 
- * Dieses Werkzeug ist ein eingebettetes Subwerkzeug. Es kann nicht beobachtet
- * werden.
+ * Dieses Werkzeug ist ein eingebettetes Subwerkzeug.
  * 
  * @author SE2-Team
- * @version SoSe 2018
+ * @version SoSe 2016
  */
 public class PlatzVerkaufsWerkzeug
 {
@@ -62,7 +62,7 @@ public class PlatzVerkaufsWerkzeug
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                verkaufePlaetze(_vorstellung);
+                fuehreBarzahlungDurch();
             }
         });
 
@@ -88,6 +88,14 @@ public class PlatzVerkaufsWerkzeug
     }
 
     /**
+     * Startet die Barzahlung.
+     */
+    private void fuehreBarzahlungDurch()
+    {
+        verkaufePlaetze(_vorstellung);
+    }
+
+    /**
      * Reagiert darauf, dass sich die Menge der ausgewählten Plätze geändert
      * hat.
      * 
@@ -105,15 +113,27 @@ public class PlatzVerkaufsWerkzeug
      */
     private void aktualisierePreisanzeige(Set<Platz> plaetze)
     {
-
         if (istVerkaufenMoeglich(plaetze))
         {
             int preis = _vorstellung.getPreisFuerPlaetze(plaetze);
-            _ui.getPreisLabel().setText("Gesamtpreis: " + preis + " Eurocent");
+            _ui.getPreisLabel().setText(
+                    "Gesamtpreis: " + preis + " Eurocent");
+        }
+        else if (istStornierenMoeglich(plaetze))
+        {
+            int preis = _vorstellung.getPreisFuerPlaetze(plaetze);
+            _ui.getPreisLabel().setText(
+                    "Gesamtstorno: " + preis + " Eurocent");
+        }
+        else if (!plaetze.isEmpty())
+        {
+            _ui.getPreisLabel().setText(
+                    "Verkauf und Storno nicht gleichzeitig möglich!");
         }
         else
         {
-            _ui.getPreisLabel().setText("Gesamtpreis:");
+            _ui.getPreisLabel().setText(
+                    "Gesamtpreis: 0 Eurocent");
         }
     }
 
@@ -156,20 +176,39 @@ public class PlatzVerkaufsWerkzeug
         if (_vorstellung != null)
         {
             Kinosaal saal = _vorstellung.getKinosaal();
-            _ui.getPlatzplan().setAnzahlPlaetze(saal.getAnzahlReihen(),
+            initialisierePlatzplan(saal.getAnzahlReihen(),
                     saal.getAnzahlSitzeProReihe());
-
-            for (Platz platz : saal.getPlaetze())
-            {
-                if (_vorstellung.istPlatzVerkauft(platz))
-                {
-                    _ui.getPlatzplan().markierePlatzAlsVerkauft(platz);
-                }
-            }
+            markiereNichtVerkaufbarePlaetze(saal.getPlaetze());
         }
         else
         {
-            _ui.getPlatzplan().setAnzahlPlaetze(0, 0);
+            initialisierePlatzplan(0, 0);
+        }
+    }
+
+    /**
+     * Setzt am Platzplan die Anzahl der Reihen und der Sitze.
+     * 
+     * @param saal Ein Saal mit dem der Platzplan initialisiert wird.
+     */
+    private void initialisierePlatzplan(int reihen, int sitzeProReihe)
+    {
+        _ui.getPlatzplan().setAnzahlPlaetze(reihen, sitzeProReihe);
+    }
+
+    /**
+     * Markiert alle nicht verkaufbaren Plätze im Platzplan als verkauft.
+     * 
+     * @param plaetze Eine Liste mit allen Plaetzen im Saal.
+     */
+    private void markiereNichtVerkaufbarePlaetze(List<Platz> plaetze)
+    {
+        for (Platz platz : plaetze)
+        {
+            if (!_vorstellung.istVerkaufbar(platz))
+            {
+                _ui.getPlatzplan().markierePlatzAlsVerkauft(platz);
+            }
         }
     }
 

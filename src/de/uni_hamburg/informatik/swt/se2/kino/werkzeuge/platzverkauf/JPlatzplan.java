@@ -11,10 +11,8 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
 import javax.swing.JComponent;
 import javax.swing.JLabel;
-
 import de.uni_hamburg.informatik.swt.se2.kino.fachwerte.Platz;
 
 /**
@@ -28,7 +26,7 @@ import de.uni_hamburg.informatik.swt.se2.kino.fachwerte.Platz;
  * Auswahl-Event.
  * 
  * @author SE2-Team
- * @version SoSe 2018
+ * @version SoSe 2016
  */
 class JPlatzplan extends JComponent
 {
@@ -90,7 +88,8 @@ class JPlatzplan extends JComponent
      * Fügt einen Listener hinzu, der bei Änderungen der Auswahl benachrichtigt
      * wird.
      * 
-     * @param listener der Listener.
+     * @param listener
+     *            der Listener.
      */
     public void addPlatzSelectionListener(PlatzSelectionListener listener)
     {
@@ -100,7 +99,8 @@ class JPlatzplan extends JComponent
     /**
      * Entfernt einen Listener.
      * 
-     * @param listener der Listener.
+     * @param listener
+     *            der Listener.
      */
     public void removePlatzSelectionListener(PlatzSelectionListener listener)
     {
@@ -110,7 +110,8 @@ class JPlatzplan extends JComponent
     /**
      * Benachrichtigt die SelectionListener, dass sich die Auswahl geändert hat.
      * 
-     * @param ausgewaehltePlaetze die neue Auswahl.
+     * @param ausgewaehltePlaetze
+     *            die neue Auswahl.
      */
     private void informiereSelectionListener(Set<Platz> ausgewaehltePlaetze)
     {
@@ -127,8 +128,10 @@ class JPlatzplan extends JComponent
      * angeboten werden. Achtung, nach dem Aufruf dieser Methode werden zunächst
      * alle Plätze als frei angezeigt!
      * 
-     * @param anzahlReihen die Anzahl der Reihen
-     * @param anzahlSitzeProReihe die Anzahl der Plätze pro Reihe
+     * @param anzahlReihen
+     *            die Anzahl der Reihen
+     * @param anzahlSitzeProReihe
+     *            die Anzahl der Plätze pro Reihe
      * 
      * @require anzahlReihen >= 0
      * @require anzahlSitzeProReihe >= 0
@@ -149,7 +152,7 @@ class JPlatzplan extends JComponent
             imGitterEinfuegen(label, 0, reihe);
             for (int sitz = 0; sitz < anzahlSitzeProReihe; sitz++)
             {
-                JPlatzButton button = new JPlatzButton(new Platz(reihe, sitz));
+                JPlatzButton button = new JPlatzButton(Platz.get(reihe, sitz));
                 button.setMinimumSize(PLATZBUTTON_GROESSE);
                 button.setPreferredSize(PLATZBUTTON_GROESSE);
                 imGitterEinfuegen(button, sitz + 1, reihe);
@@ -168,9 +171,12 @@ class JPlatzplan extends JComponent
     /**
      * Fügt ein GUI-Element in das Darstellungsgitter ein.
      * 
-     * @param component Das GUI-Element, das eingefügt werden soll.
-     * @param gridx x-Position im Gitter.
-     * @param gridy y-Position im Gitter.
+     * @param component
+     *            Das GUI-Element, das eingefügt werden soll.
+     * @param gridx
+     *            x-Position im Gitter.
+     * @param gridy
+     *            y-Position im Gitter.
      */
     private void imGitterEinfuegen(Component component, int gridx, int gridy)
     {
@@ -205,7 +211,8 @@ class JPlatzplan extends JComponent
     /**
      * Markiert den angegebenen Platz als verkauft.
      * 
-     * @param platz der Platz.
+     * @param platz
+     *            der Platz.
      * 
      * @require platz != null
      */
@@ -219,7 +226,8 @@ class JPlatzplan extends JComponent
     /**
      * Markiert den angegebenen Platz als frei.
      * 
-     * @param platz der Platz.
+     * @param platz
+     *            der Platz.
      * 
      * @require platz != null
      */

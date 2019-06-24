@@ -10,7 +10,7 @@ import de.uni_hamburg.informatik.swt.se2.kino.fachwerte.Platz;
  * Sitzplätze.
  * 
  * @author SE2-Team
- * @version SoSe 2018
+ * @version SoSe 2016
  */
 public class Kinosaal
 {
@@ -21,9 +21,12 @@ public class Kinosaal
     /**
      * Initialisiert einen neuen Kinosaal.
      * 
-     * @param name der Name des Kinosaals.
-     * @param anzahlReihen die Anzahl der Reihen.
-     * @param anzahlSitzeProReihe die Anzahl der Sitze Pro Reihe.
+     * @param name
+     *            der Name des Kinosaals.
+     * @param anzahlReihen
+     *            die Anzahl der Reihen.
+     * @param anzahlSitzeProReihe
+     *            die Anzahl der Sitze Pro Reihe.
      * 
      * @require name != null
      * @require anzahlReihen > 0
@@ -88,7 +91,7 @@ public class Kinosaal
         {
             for (int j = 0; j < plaetze; j++)
             {
-                Platz platz = new Platz(i, j);
+                Platz platz = Platz.get(i, j);
                 kinoPlaetze.add(platz);
             }
         }
@@ -98,17 +101,18 @@ public class Kinosaal
     /**
      * Prüft, ob es den angegebenen Platz in dem Kinosaal gibt.
      * 
-     * @param platz der Platz.
+     * @param platz
+     *            der Platz.
      * 
      * @return <code>true</code>, falls der Platz existiert, <code>false</code>
      *         sonst.
-     * 
-     * @require platz != null
+     *         
+     * @require platz != null        
      */
     public boolean hatPlatz(Platz platz)
     {
         assert platz != null : "Vorbedingung verletzt: platz != null";
-
+        
         return ((platz.getReihe() >= 0) && (platz.getReihe() < _anzahlReihen))
                 && ((platz.getSitz() >= 0) && (platz.getSitz() < _anzahlSitzeProReihe));
     }

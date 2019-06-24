@@ -11,7 +11,7 @@ public class UhrzeitTest
     @Test
     public void testeKonstruktoren()
     {
-        Uhrzeit u = new Uhrzeit(15, 13);
+        Uhrzeit u = Uhrzeit.get(15, 13);
         assertEquals(15, u.getStunden());
         assertEquals(13, u.getMinuten());
     }
@@ -19,9 +19,9 @@ public class UhrzeitTest
     @Test
     public void testeCompareTo()
     {
-        Uhrzeit u1_12_00 = new Uhrzeit(12, 00);
-        Uhrzeit u2_15_20 = new Uhrzeit(15, 20);
-        Uhrzeit u3_15_20 = new Uhrzeit(15, 20);
+        Uhrzeit u1_12_00 = Uhrzeit.get(12, 00);
+        Uhrzeit u2_15_20 = Uhrzeit.get(15, 20);
+        Uhrzeit u3_15_20 = Uhrzeit.get(15, 20);
 
         assertTrue(u1_12_00.compareTo(u2_15_20) < 0);
         assertTrue(u2_15_20.compareTo(u1_12_00) > 0);
@@ -32,9 +32,9 @@ public class UhrzeitTest
     @Test
     public void testeMinutenSeit()
     {
-        Uhrzeit u1_11_50 = new Uhrzeit(11, 50);
-        Uhrzeit u2_15_20 = new Uhrzeit(15, 20);
-        Uhrzeit u3_15_40 = new Uhrzeit(15, 40);
+        Uhrzeit u1_11_50 = Uhrzeit.get(11, 50);
+        Uhrzeit u2_15_20 = Uhrzeit.get(15, 20);
+        Uhrzeit u3_15_40 = Uhrzeit.get(15, 40);
 
         assertEquals(210, u2_15_20.minutenSeit(u1_11_50));
         assertEquals(1230, u1_11_50.minutenSeit(u2_15_20));
@@ -49,10 +49,10 @@ public class UhrzeitTest
     @Test
     public void testeEquals()
     {
-        Uhrzeit u1 = new Uhrzeit(20, 15);
-        Uhrzeit u2 = new Uhrzeit(20, 15);
-        Uhrzeit u3 = new Uhrzeit(20, 17);
-        Uhrzeit u4 = new Uhrzeit(12, 15);
+        Uhrzeit u1 = Uhrzeit.get(20, 15);
+        Uhrzeit u2 = Uhrzeit.get(20, 15);
+        Uhrzeit u3 = Uhrzeit.get(20, 17);
+        Uhrzeit u4 = Uhrzeit.get(12, 15);
 
         assertEquals(u1, u2);
         assertFalse("Uhrzeit(20,15) ungleich Uhrzeit(20,17)", u1.equals(u3));
@@ -62,8 +62,8 @@ public class UhrzeitTest
     @Test
     public void testeHashCode()
     {
-        Uhrzeit u1 = new Uhrzeit(20, 15);
-        Uhrzeit u2 = new Uhrzeit(20, 15);
+        Uhrzeit u1 = Uhrzeit.get(20, 15);
+        Uhrzeit u2 = Uhrzeit.get(20, 15);
 
         assertEquals("HashCode bleibt bei zwei Aufrufen gleich", u1.hashCode(),
                 u1.hashCode());

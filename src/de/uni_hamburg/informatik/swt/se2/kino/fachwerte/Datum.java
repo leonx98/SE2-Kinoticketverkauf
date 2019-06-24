@@ -11,26 +11,34 @@ import java.util.TimeZone;
  * bilden.
  * 
  * @author SE2-Team
- * @version SoSe 2018
+ * @version SoSe 2016
  */
 public final class Datum implements Comparable<Datum>
 {
-    private static final long MILLISECONDS_PER_DAY = 1000 * 60 * 60 * 24;
+    /*
+     * WICHTIGER HINWEIS AN DIE STUDIERENDEN
+     * 
+     * Alle Exemplare der Klasse Datum teilen sich ein veränderliches Calender-Objekt.
+     * Dieses Vorgehen ist extrem untypisch für Fachwerte.
+     * Also nehmt diese Klasse bitte nicht als Musterbeispiel für Fachwerte!
+     * Orientiert euch lieber an den Klassen Uhrzeit oder Geldbetrag. 
+     * 
+     * Die Klassen java.util.Date und java.util.Calendar sind so schrecklich,
+     * dass sie in Java 8 durch das Paket java.time abgelöst wurden:
+     * http://www.oracle.com/technetwork/articles/java/jf14-date-time-2125367.html 
+     */
+    private static final Calendar kalender = Calendar.getInstance();
+    private static final long MILLISEKUNDEN_PRO_TAG = 24L * 60 * 60 * 1000;
 
     private final int _jahr;
     private final int _monat;
     private final int _tag;
 
-    // Für Gültigkeitsprüfungen und Datumsarithmetik wird intern ein Objekt vom
-    // Typ Calendar verwendet.
-    private static final Calendar CALENDAR = Calendar.getInstance();
-
-    // "Static initializer", initialisiert Klassenvariablen nach der Erzeugung
-    // des Klassenobjekts.
+    // Statische Initialisierungsblöcke dienen der Initialisierung von Klassenvariablen.
     static
     {
-        CALENDAR.setLenient(false);
-        CALENDAR.setTimeZone(TimeZone.getTimeZone("GMT"));
+        kalender.setLenient(false);
+        kalender.setTimeZone(TimeZone.getTimeZone("GMT"));
     }
 
     /**
@@ -44,12 +52,17 @@ public final class Datum implements Comparable<Datum>
      * 
      * @ensure getTag() == tag
      * @ensure getMonat() == monat
-     * @ensure gibtJahr() == jahr
+     * @ensure getJahr() == jahr
      */
-    public Datum(int tag, int monat, int jahr)
+    public static Datum get(int tag, int monat, int jahr)
     {
         assert istGueltig(tag, monat, jahr) : "Vorbedingung verletzt: istGueltig(tag, monat, jahr)";
 
+        return new Datum(tag, monat, jahr);
+    }
+
+    private Datum(int tag, int monat, int jahr)
+    {
         _tag = tag;
         _monat = monat;
         _jahr = jahr;
@@ -57,21 +70,25 @@ public final class Datum implements Comparable<Datum>
 
     /**
      * Liefert das heutige Datum zurück.
-     * 
-     * @ensure result != null
      */
     public static Datum heute()
     {
-        Datum datum = null;
-        synchronized (CALENDAR)
+        synchronized (kalender)
         {
-            CALENDAR.clear();
-            CALENDAR.setTimeInMillis(System.currentTimeMillis());
-            datum = new Datum(CALENDAR.get(Calendar.DAY_OF_MONTH),
-                    CALENDAR.get(Calendar.MONTH) + 1,
-                    CALENDAR.get(Calendar.YEAR));
+            kalender.clear();
+            kalender.setTimeInMillis(System.currentTimeMillis());
+
+            return aktuellesDatumDesKalenders();
         }
-        return datum;
+    }
+
+    private static Datum aktuellesDatumDesKalenders()
+    {
+        int tag = kalender.get(Calendar.DAY_OF_MONTH);
+        int monat = kalender.get(Calendar.MONTH) + 1;
+        int jahr = kalender.get(Calendar.YEAR);
+
+        return get(tag, monat, jahr);
     }
 
     /**
@@ -80,109 +97,30 @@ public final class Datum implements Comparable<Datum>
      * @param tag Der Tag im Monat (1..31).
      * @param monat Der Monat im Jahr (1..12).
      * @param jahr Das Jahr.
-     * @return <code>true</code> wenn drei übergebene Zahlen ein gültiges Datum
-     *         ergeben, ansonsten <code>false</code>.
+     * 
+     * @return true wenn drei übergebene Zahlen ein gültiges Datum ergeben,
+     *         ansonsten false.
      */
     public static boolean istGueltig(int tag, int monat, int jahr)
     {
-        boolean gueltig = ((monat >= 1) && (monat <= 12));
-        if (gueltig)
+        return istGueltigerMonat(monat) && istGueltigerTag(tag, monat, jahr);
+    }
+
+    private static boolean istGueltigerMonat(int monat)
+    {
+        return (monat >= 1) && (monat <= 12);
+    }
+
+    private static boolean istGueltigerTag(int tag, int monat, int jahr)
+    {
+        synchronized (kalender)
         {
-            synchronized (CALENDAR)
-            {
-                CALENDAR.clear();
-                CALENDAR.set(Calendar.YEAR, jahr);
-                CALENDAR.set(Calendar.MONTH, monat - 1);
-                gueltig = ((tag >= 1) && (tag <= CALENDAR
-                        .getActualMaximum(Calendar.DAY_OF_MONTH)));
-            }
+            kalender.clear();
+            kalender.set(Calendar.YEAR, jahr);
+            kalender.set(Calendar.MONTH, monat - 1);
+
+            return (tag >= 1) && (tag <= kalender.getActualMaximum(Calendar.DAY_OF_MONTH));
         }
-        return gueltig;
-    }
-
-    /**
-     * Vergleicht dieses Datum mit einem anderen Datum.
-     * 
-     * @param datum das andere Datum.
-     * @return einen Wert kleiner als 0 falls dieses Datum kleiner als datum
-     *         ist, einen Wert größer als 0, falls dieses Datum größer als datum
-     *         ist, sonst 0.
-     */
-    @Override
-    public int compareTo(Datum datum)
-    {
-        return tageSeit(datum);
-    }
-
-    @Override
-    public boolean equals(Object o)
-    {
-        boolean result = false;
-        if (o instanceof Datum)
-        {
-            Datum vergleichsdatum = (Datum) o;
-            result = ((getTag() == vergleichsdatum.getTag())
-                    && (getMonat() == vergleichsdatum.getMonat()) && (getJahr() == vergleichsdatum
-                    .getJahr()));
-        }
-        return result;
-    }
-
-    @Override
-    public int hashCode()
-    {
-        // Hash-Code ist ca. die Anzahl der Tage seit dem Jahr 0
-        return getJahr() * 365 + getMonat() * 31 + getTag();
-    }
-
-    /**
-     * Gibt das Jahr dieses Datums zurück.
-     */
-    public int getJahr()
-    {
-        return _jahr;
-    }
-
-    /**
-     * Gibt den Monat (im Jahr) dieses Datums zurück (1..12).
-     */
-    public int getMonat()
-    {
-        return _monat;
-    }
-
-    /**
-     * Gibt den Tag (im Monat) dieses Datums zurück.
-     */
-    public int getTag()
-    {
-        return _tag;
-    }
-
-    /**
-     * Subtrahiert von diesem Datum eine übergebene Anzahl an Tagen und gibt das
-     * Ergebnis als neues Datum zurück.
-     * 
-     * @param tage Die abzuziehenden Tage
-     * @return den Tag, der um die angegebene Anzahl Tage vor diesem Tag liegt.
-     * 
-     * @require tage >= 0
-     * @ensure result != null
-     */
-    public Datum minus(int tage)
-    {
-        assert tage >= 0 : "Vorbedingung verletzt: tage >= 0";
-        Datum datum = null;
-        synchronized (CALENDAR)
-        {
-            CALENDAR.clear();
-            CALENDAR.set(_jahr, _monat - 1, _tag);
-            CALENDAR.add(Calendar.DAY_OF_MONTH, -tage);
-            datum = new Datum(CALENDAR.get(Calendar.DAY_OF_MONTH),
-                    CALENDAR.get(Calendar.MONTH) + 1,
-                    CALENDAR.get(Calendar.YEAR));
-        }
-        return datum;
     }
 
     /**
@@ -190,25 +128,32 @@ public final class Datum implements Comparable<Datum>
      * Ergebnis als neues Datum zurück.
      * 
      * @param tage Die zu addierenden Tage
-     * @return den Tag, der um die angegebene Anzahl Tage nach diesem Tag liegt.
      * 
-     * @require tage >= 0
-     * @ensure result != null
+     * @return den Tag, der um die angegebene Anzahl Tage nach diesem Tag liegt.
      */
     public Datum plus(int tage)
     {
-        assert tage >= 0 : "Vorbedingung verletzt: tage >= 0";
-        Datum datum = null;
-        synchronized (CALENDAR)
+        synchronized (kalender)
         {
-            CALENDAR.clear();
-            CALENDAR.set(_jahr, _monat - 1, _tag);
-            CALENDAR.add(Calendar.DAY_OF_MONTH, tage);
-            datum = new Datum(CALENDAR.get(Calendar.DAY_OF_MONTH),
-                    CALENDAR.get(Calendar.MONTH) + 1,
-                    CALENDAR.get(Calendar.YEAR));
+            kalender.clear();
+            kalender.set(_jahr, _monat - 1, _tag);
+            kalender.add(Calendar.DAY_OF_MONTH, tage);
+            
+            return aktuellesDatumDesKalenders();
         }
-        return datum;
+    }
+
+    /**
+     * Subtrahiert von diesem Datum eine übergebene Anzahl an Tagen und gibt das
+     * Ergebnis als neues Datum zurück.
+     * 
+     * @param tage Die abzuziehenden Tage
+     * 
+     * @return den Tag, der um die angegebene Anzahl Tage vor diesem Tag liegt.
+     */
+    public Datum minus(int tage)
+    {
+        return plus(-tage);
     }
 
     /**
@@ -235,58 +180,83 @@ public final class Datum implements Comparable<Datum>
      * Berechnet, wie viele Tage seit dem angegebenen Datum bis zu diesem Datum
      * vergangen sind.
      * 
-     * @param startDatum das Startdatum des Zeitraums.
+     * @param start das Startdatum des Zeitraums.
      * 
-     * @require startDatum != null
+     * @require start != null
      */
-    public int tageSeit(Datum startDatum)
+    public int tageSeit(Datum start)
     {
-        assert startDatum != null : "Vorbedingung verletzt: startDatum != null";
+        assert start != null : "Vorbedingung verletzt: start != null";
 
-        long startMillis = startDatum.inMillisekunden();
-        long endMillis = this.inMillisekunden();
-
-        return (int) ((endMillis - startMillis) / MILLISECONDS_PER_DAY);
+        long millisekunden = this.inMillisekunden() - start.inMillisekunden();
+        long tage = millisekunden / MILLISEKUNDEN_PRO_TAG;
+        
+        return (int) tage;
     }
 
-    /**
-     * Gibt dieses Datum in Millisekunden zurück.
-     */
     private long inMillisekunden()
     {
-        synchronized (CALENDAR)
+        synchronized (kalender)
         {
-            CALENDAR.clear();
-            CALENDAR.set(_jahr, _monat - 1, _tag);
-            long endMillis = CALENDAR.getTimeInMillis();
-            return endMillis;
+            kalender.clear();
+            kalender.set(_jahr, _monat - 1, _tag);
+            
+            return kalender.getTimeInMillis();
         }
+    }
+
+    @Override
+    public boolean equals(Object o)
+    {
+        return (o instanceof Datum) && equals((Datum) o);
+    }
+
+    private boolean equals(Datum anderesDatum)
+    {
+        return (_tag == anderesDatum._tag) && (_monat == anderesDatum._monat) && (_jahr == anderesDatum._jahr);
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return _jahr * 366 + _monat * 31 + _tag;
+    }
+
+    @Override
+    public int compareTo(Datum anderesDatum)
+    {
+        return tageSeit(anderesDatum);
     }
 
     /**
      * Gibt eine String-Repräsentation dieses Datums zurück.
-     * 
-     * @ensure result != null
-     */
-    @Override
-    public String toString()
-    {
-        return getFormatiertenString();
-    }
-
-    /**
-     * Gibt dieses Datum formatiert zurück in der Schreibweise Tag.Monat.Jahr.
-     * 
-     * @ensure result != null
      */
     public String getFormatiertenString()
     {
-        StringBuilder sb = new StringBuilder();
-        sb.append(_tag);
-        sb.append(".");
-        sb.append(_monat);
-        sb.append(".");
-        sb.append(_jahr);
-        return sb.toString();
+        return String.format("%02d.%02d.%4d", _tag, _monat, _jahr);
+    }
+
+    /**
+     * Gibt das Jahr dieses Datums zurück.
+     */
+    public int getJahr()
+    {
+        return _jahr;
+    }
+
+    /**
+     * Gibt den Monat (im Jahr) dieses Datums zurück.
+     */
+    public int getMonat()
+    {
+        return _monat;
+    }
+
+    /**
+     * Gibt den Tag (im Monat) dieses Datums zurück.
+     */
+    public int getTag()
+    {
+        return _tag;
     }
 }

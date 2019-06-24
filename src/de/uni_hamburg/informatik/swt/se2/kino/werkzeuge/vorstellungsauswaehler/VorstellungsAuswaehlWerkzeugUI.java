@@ -13,7 +13,7 @@ import javax.swing.ListSelectionModel;
  * Die UI des {@link VorstellungsAuswaehlWerkzeug}.
  * 
  * @author SE2-Team
- * @version SoSe 2018
+ * @version SoSe 2016
  */
 class VorstellungsAuswaehlWerkzeugUI
 {

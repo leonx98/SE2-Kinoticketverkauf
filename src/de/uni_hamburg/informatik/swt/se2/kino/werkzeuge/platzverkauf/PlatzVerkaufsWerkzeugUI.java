@@ -13,7 +13,7 @@ import javax.swing.JScrollPane;
  * Die UI des {@link PlatzVerkaufsWerkzeug}.
  * 
  * @author SE2-Team
- * @version SoSe 2018
+ * @version SoSe 2016
  */
 class PlatzVerkaufsWerkzeugUI
 {
@@ -23,7 +23,7 @@ class PlatzVerkaufsWerkzeugUI
     private JButton _verkaufenButton;
     private JButton _stornierenButton;
     private JPlatzplan _platzplan;
-
+   
     /**
      * Initialisiert die UI.
      */
@@ -42,28 +42,28 @@ class PlatzVerkaufsWerkzeugUI
         panel.setLayout(new BorderLayout());
         _platzplan = new JPlatzplan();
         panel.add(new JScrollPane(_platzplan), BorderLayout.CENTER);
-
+        
         JPanel southPanel = new JPanel(new BorderLayout());
-        southPanel.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 0));
-
+        southPanel.setBorder(BorderFactory.createEmptyBorder(5,10,5,0));
+        
         JPanel preisPanel = new JPanel(new BorderLayout());
         _preisLabel = new JLabel();
         preisPanel.add(_preisLabel, BorderLayout.CENTER);
-
+        
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         _verkaufenButton = new JButton("Verkaufen");
-        buttonPanel.add(_verkaufenButton);
+        buttonPanel.add(_verkaufenButton);    
         _stornierenButton = new JButton("Stornieren");
         buttonPanel.add(_stornierenButton);
-
+        
         southPanel.add(_preisLabel, BorderLayout.CENTER);
         southPanel.add(buttonPanel, BorderLayout.EAST);
-
+        
         panel.add(southPanel, BorderLayout.SOUTH);
-
+        
         return panel;
     }
-
+    
     /**
      * Gibt den Platzplan zurück.
      */
@@ -71,7 +71,7 @@ class PlatzVerkaufsWerkzeugUI
     {
         return _platzplan;
     }
-
+    
     /**
      * Gibt das Label für die Preisanzeige zurück.
      */
@@ -79,7 +79,7 @@ class PlatzVerkaufsWerkzeugUI
     {
         return _preisLabel;
     }
-
+    
     /**
      * Gibt den Stornieren-Button zurück.
      */
@@ -87,7 +87,7 @@ class PlatzVerkaufsWerkzeugUI
     {
         return _stornierenButton;
     }
-
+    
     /**
      * Gibt den Verkaufen-Button zurück.
      */
@@ -95,7 +95,7 @@ class PlatzVerkaufsWerkzeugUI
     {
         return _verkaufenButton;
     }
-
+    
     /**
      * Gibt das Panel zurück, in dem die Widgets angeordnet sind.
      */
