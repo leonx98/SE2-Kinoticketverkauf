@@ -5,11 +5,13 @@ import java.awt.event.ActionListener;
 import java.util.List;
 import java.util.Set;
 
-import javax.swing.JPanel;
+import javax.swing.*;
 
 import de.uni_hamburg.informatik.swt.se2.kino.fachwerte.Platz;
 import de.uni_hamburg.informatik.swt.se2.kino.materialien.Kinosaal;
 import de.uni_hamburg.informatik.swt.se2.kino.materialien.Vorstellung;
+import de.uni_hamburg.informatik.swt.se2.kino.werkzeuge.barverkauf.BarVerkaufsWerkzeug;
+import de.uni_hamburg.informatik.swt.se2.kino.werkzeuge.barverkauf.BarVerkaufsWerkzeugUI;
 
 /**
  * Mit diesem Werkzeug können Plätze verkauft und storniert werden. Es arbeitet
@@ -27,6 +29,7 @@ public class PlatzVerkaufsWerkzeug
     private Vorstellung _vorstellung;
 
     private PlatzVerkaufsWerkzeugUI _ui;
+    private BarVerkaufsWerkzeug _barVerkaufsWerkzeug;
 
     /**
      * Initialisiert das PlatzVerkaufsWerkzeug.
@@ -34,6 +37,7 @@ public class PlatzVerkaufsWerkzeug
     public PlatzVerkaufsWerkzeug()
     {
         _ui = new PlatzVerkaufsWerkzeugUI();
+        _barVerkaufsWerkzeug = new BarVerkaufsWerkzeug();
         registriereUIAktionen();
         // Am Anfang wird keine Vorstellung angezeigt:
         setVorstellung(null);
@@ -220,6 +224,9 @@ public class PlatzVerkaufsWerkzeug
         Set<Platz> plaetze = _ui.getPlatzplan().getAusgewaehltePlaetze();
         vorstellung.verkaufePlaetze(plaetze);
         aktualisierePlatzplan();
+
+        int gesamtPreis = plaetze.size() * vorstellung.getPreis();
+        _barVerkaufsWerkzeug.starteBarBezahlung(gesamtPreis);
     }
 
     /**
