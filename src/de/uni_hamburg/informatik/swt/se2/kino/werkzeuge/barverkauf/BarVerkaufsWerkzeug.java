@@ -24,6 +24,7 @@ public class BarVerkaufsWerkzeug {
     {
         _ui = new BarVerkaufsWerkzeugUI();
         registriereUIAktionen();
+
     }
 
     /**
@@ -31,7 +32,7 @@ public class BarVerkaufsWerkzeug {
      */
     private void registriereUIAktionen()
     {
-        _ui._textfield.getDocument().addDocumentListener(new DocumentListener() {
+        _ui.getTextField().getDocument().addDocumentListener(new DocumentListener() {
             @Override
             public void insertUpdate(DocumentEvent e) {
                 textFieldAktualisiert();
@@ -48,21 +49,14 @@ public class BarVerkaufsWerkzeug {
             }
         });
 
-        _ui._textfield.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                System.out.println("pressed enter");
-            }
-        });
-
-        _ui._abbrechenButton.addActionListener(new ActionListener() {
+        _ui.getAbbrechenButton().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 abbrechenButtonGedrueckt();
             }
         });
 
-        _ui._okButton.addActionListener(new ActionListener() {
+        _ui.getOkButton().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 okButtonGedrueckt();
@@ -72,26 +66,26 @@ public class BarVerkaufsWerkzeug {
 
     private void okButtonGedrueckt() {
         _istBezahlungErfolgreich = true;
-        _ui._mainDialog.setVisible(false);
+        _ui.getMainDialog().setVisible(false);
     }
 
 
     private void abbrechenButtonGedrueckt() {
         _istBezahlungErfolgreich = false;
-        _ui._mainDialog.setVisible(false);
+        _ui.getMainDialog().setVisible(false);
     }
 
     private void textFieldAktualisiert() {
-        String input = _ui._textfield.getText();
+        String input = _ui.getTextField().getText();
 
         Pattern p = Pattern.compile("^[0-9]{0,4}(\\,[0-9]{1,2})$");
         Matcher m = p.matcher(input);
 
         if (m.find()) {
-            System.out.println("Matched: " + m.group(0));
+            //System.out.println("Matched: " + m.group(0));
             aktualisiereRueckgeld(Double.parseDouble(input.replace(",", ".")));
         } else {
-            System.out.println("No match.");
+            //System.out.println("No match.");
             aktualisiereRueckgeld(0);
         }
     }
@@ -99,29 +93,30 @@ public class BarVerkaufsWerkzeug {
     private void aktualisiereRueckgeld(double eingegebenerBetrag) {
         _istBezahlungErfolgreich = false;
         if (eingegebenerBetrag < _betragInEuro) {
-            _ui._rueckGeldLabel.setText("");
-            _ui._okButton.setEnabled(false);
+            _ui.getRueckGeldLabel().setText("Rückgeld:");
+            _ui.getOkButton().setEnabled(false);
         } else {
             double rueckgeld = Math.round((_betragInEuro - eingegebenerBetrag)*100)/100.00;//Math.round(_betragInEuro - eingegebenerBetrag);
-            _ui._rueckGeldLabel.setText(rueckGeldBetragText.replace("{BETRAG}", Double.toString(rueckgeld).replace(".", ",")));
-            _ui._okButton.setEnabled(true);
+            _ui.getRueckGeldLabel().setText(rueckGeldBetragText.replace("{BETRAG}", Double.toString(rueckgeld).replace(".", ",")));
+            _ui.getOkButton().setEnabled(true);
         }
     }
 
     public boolean starteBarBezahlung(int geldbetrag) {
 
-        _ui._okButton.setEnabled(false);
-        _ui._rueckGeldLabel.setText("");
-        _ui._textfield.setText("");
+        _ui.getOkButton().setEnabled(false);
+        _ui.getRueckGeldLabel().setText("Rückgeld:");
+        _ui.getTextField().setText("");
 
         _betragInEuro = ((double)geldbetrag)/100;
-        _ui._gesamtBetragLabel.setText(gesamtBetragText.replace("{BETRAG}", Double.toString(_betragInEuro).replace(".", ",")));
+        _ui.getGesamtBetragLabel().setText(gesamtBetragText.replace("{BETRAG}", Double.toString(_betragInEuro).replace(".", ",")));
 
-        JDialog dialog = _ui._mainDialog;
+        JDialog dialog = _ui.getMainDialog();
         dialog.setLocationRelativeTo(null);
-        dialog.setSize(400, 200);
+        //dialog.setSize(400, 200);
+        dialog.pack();
         dialog.setVisible(true);
 
-        return true;
+        return _istBezahlungErfolgreich;
     }
 }

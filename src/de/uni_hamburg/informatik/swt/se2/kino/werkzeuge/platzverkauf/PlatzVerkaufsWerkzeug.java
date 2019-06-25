@@ -10,6 +10,7 @@ import javax.swing.*;
 import de.uni_hamburg.informatik.swt.se2.kino.fachwerte.Platz;
 import de.uni_hamburg.informatik.swt.se2.kino.materialien.Kinosaal;
 import de.uni_hamburg.informatik.swt.se2.kino.materialien.Vorstellung;
+import de.uni_hamburg.informatik.swt.se2.kino.werkzeuge.SubwerkzeugObserver;
 import de.uni_hamburg.informatik.swt.se2.kino.werkzeuge.barverkauf.BarVerkaufsWerkzeug;
 import de.uni_hamburg.informatik.swt.se2.kino.werkzeuge.barverkauf.BarVerkaufsWerkzeugUI;
 
@@ -96,7 +97,12 @@ public class PlatzVerkaufsWerkzeug
      */
     private void fuehreBarzahlungDurch()
     {
-        verkaufePlaetze(_vorstellung);
+        Set<Platz> plaetze = _ui.getPlatzplan().getAusgewaehltePlaetze();
+
+        int gesamtPreis = plaetze.size() * _vorstellung.getPreis();
+        if(_barVerkaufsWerkzeug.starteBarBezahlung(gesamtPreis)) {
+            verkaufePlaetze(_vorstellung);
+        }
     }
 
     /**
@@ -224,9 +230,6 @@ public class PlatzVerkaufsWerkzeug
         Set<Platz> plaetze = _ui.getPlatzplan().getAusgewaehltePlaetze();
         vorstellung.verkaufePlaetze(plaetze);
         aktualisierePlatzplan();
-
-        int gesamtPreis = plaetze.size() * vorstellung.getPreis();
-        _barVerkaufsWerkzeug.starteBarBezahlung(gesamtPreis);
     }
 
     /**

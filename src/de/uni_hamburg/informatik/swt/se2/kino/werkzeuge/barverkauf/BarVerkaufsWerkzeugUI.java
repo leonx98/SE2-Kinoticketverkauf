@@ -1,17 +1,16 @@
 package de.uni_hamburg.informatik.swt.se2.kino.werkzeuge.barverkauf;
 
 import javax.swing.*;
-import javax.swing.plaf.multi.MultiLabelUI;
 import java.awt.*;
 
 public class BarVerkaufsWerkzeugUI {
 
-    protected JDialog _mainDialog;
-    protected JButton _okButton;
-    protected JButton _abbrechenButton;
-    protected JTextField _textfield;
-    protected JLabel _gesamtBetragLabel;
-    protected JLabel _rueckGeldLabel;
+    private JDialog _mainDialog;
+    private JButton _okButton;
+    private JButton _abbrechenButton;
+    private JTextField _textfield;
+    private JLabel _gesamtBetragLabel;
+    private JLabel _rueckGeldLabel;
 
 
     public BarVerkaufsWerkzeugUI() {
@@ -41,5 +40,29 @@ public class BarVerkaufsWerkzeugUI {
         buttonPanel.add(_abbrechenButton);
 
         _mainDialog.add(buttonPanel);
+    }
+
+    public JDialog getMainDialog() {
+        return _mainDialog;
+    }
+
+    public JButton getOkButton() {
+        return _okButton;
+    }
+
+    public JButton getAbbrechenButton() {
+        return _abbrechenButton;
+    }
+
+    public JTextField getTextField() {
+        return _textfield;
+    }
+
+    public JLabel getGesamtBetragLabel() {
+        return _gesamtBetragLabel;
+    }
+
+    public JLabel getRueckGeldLabel() {
+        return _rueckGeldLabel;
     }
 }
