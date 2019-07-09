@@ -4,11 +4,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-
 import java.util.List;
-
 import org.junit.Test;
-
 import de.uni_hamburg.informatik.swt.se2.kino.fachwerte.Platz;
 
 public class KinosaalTest
@@ -27,8 +24,8 @@ public class KinosaalTest
     public void testeIstPlatzVorhanden()
     {
         Kinosaal k = new Kinosaal("Name", 90, 16);
-        assertTrue(k.hatPlatz(new Platz(80, 8)));
-        assertFalse(k.hatPlatz(new Platz(100, 4)));
+        assertTrue(k.hatPlatz(Platz.get(80, 8)));
+        assertFalse(k.hatPlatz(Platz.get(100, 4)));
     }
 
     @Test
@@ -37,10 +34,10 @@ public class KinosaalTest
         Kinosaal k = new Kinosaal("Name", 3, 4);
         List<Platz> plaetze = k.getPlaetze();
         assertEquals(12, plaetze.size());
-        assertTrue(plaetze.contains(new Platz(0, 0)));
-        assertTrue(plaetze.contains(new Platz(0, 3)));
-        assertTrue(plaetze.contains(new Platz(2, 0)));
-        assertTrue(plaetze.contains(new Platz(2, 3)));
+        assertTrue(plaetze.contains(Platz.get(0, 0)));
+        assertTrue(plaetze.contains(Platz.get(0, 3)));
+        assertTrue(plaetze.contains(Platz.get(2, 0)));
+        assertTrue(plaetze.contains(Platz.get(2, 3)));
     }
 
     @Test

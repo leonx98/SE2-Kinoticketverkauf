@@ -7,7 +7,7 @@ import de.uni_hamburg.informatik.swt.se2.kino.fachwerte.FSK;
  * Altersfreigabe und einer Angabe darueber, ob der Film Überlänge hat.
  * 
  * @author SE2-Team
- * @version SoSe 2018
+ * @version SoSe 2016
  */
 public class Film
 {
@@ -19,10 +19,14 @@ public class Film
     /**
      * Initialisiert einen neuen Film.
      * 
-     * @param titel der Titel.
-     * @param laenge die Laenge in Minuten.
-     * @param fsk die Altersfreigabe fuer diesen Film.
-     * @param ueberlaenge hat der Film Überlaenge?
+     * @param titel
+     *            der Titel.
+     * @param laenge
+     *            die Laenge in Minuten.
+     * @param fsk
+     *            die Altersfreigabe fuer diesen Film.
+     * @param ueberlaenge
+     *            hat der Film Überlaenge?
      * 
      * @require titel != null
      * @require laenge > 0

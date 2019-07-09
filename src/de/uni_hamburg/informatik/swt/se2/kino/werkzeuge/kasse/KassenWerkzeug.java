@@ -7,10 +7,10 @@ import de.uni_hamburg.informatik.swt.se2.kino.fachwerte.Datum;
 import de.uni_hamburg.informatik.swt.se2.kino.materialien.Kino;
 import de.uni_hamburg.informatik.swt.se2.kino.materialien.Tagesplan;
 import de.uni_hamburg.informatik.swt.se2.kino.materialien.Vorstellung;
+import de.uni_hamburg.informatik.swt.se2.kino.werkzeuge.SubwerkzeugObserver;
 import de.uni_hamburg.informatik.swt.se2.kino.werkzeuge.datumsauswaehler.DatumAuswaehlWerkzeug;
 import de.uni_hamburg.informatik.swt.se2.kino.werkzeuge.platzverkauf.PlatzVerkaufsWerkzeug;
 import de.uni_hamburg.informatik.swt.se2.kino.werkzeuge.vorstellungsauswaehler.VorstellungsAuswaehlWerkzeug;
-import de.uni_hamburg.informatik.swt.se2.kino.werkzeuge.Observer;
 
 /**
  * Das Kassenwerkzeug. Mit diesem Werkzeug kann die Benutzerin oder der Benutzer
@@ -18,9 +18,9 @@ import de.uni_hamburg.informatik.swt.se2.kino.werkzeuge.Observer;
  * stornieren.
  * 
  * @author SE2-Team
- * @version SoSe 2018
+ * @version SoSe 2016
  */
-public class KassenWerkzeug implements Observer
+public class KassenWerkzeug
 {
     // Das Material dieses Werkzeugs
     private Kino _kino;
@@ -49,9 +49,9 @@ public class KassenWerkzeug implements Observer
         // Subwerkzeuge erstellen
         _platzVerkaufsWerkzeug = new PlatzVerkaufsWerkzeug();
         _datumAuswaehlWerkzeug = new DatumAuswaehlWerkzeug();
-        _datumAuswaehlWerkzeug.addObserver(this);
         _vorstellungAuswaehlWerkzeug = new VorstellungsAuswaehlWerkzeug();
-        _vorstellungAuswaehlWerkzeug.addObserver(this);
+
+        erzeugeListenerFuerSubwerkzeuge();
 
         // UI erstellen (mit eingebetteten UIs der direkten Subwerkzeuge)
         _ui = new KassenWerkzeugUI(_platzVerkaufsWerkzeug.getUIPanel(),
@@ -63,6 +63,31 @@ public class KassenWerkzeug implements Observer
         setzeAusgewaehlteVorstellung();
 
         _ui.zeigeFenster();
+    }
+
+    /**
+     * Erzeugt und registriert die Beobachter, die die Subwerkzeuge beobachten.
+     */
+    private void erzeugeListenerFuerSubwerkzeuge()
+    {
+        _datumAuswaehlWerkzeug.registriereBeobachter(new SubwerkzeugObserver()
+        {
+            @Override
+            public void reagiereAufAenderung()
+            {
+                setzeTagesplanFuerAusgewaehltesDatum();
+            }
+        });
+
+        _vorstellungAuswaehlWerkzeug
+                .registriereBeobachter(new SubwerkzeugObserver()
+                {
+                    @Override
+                    public void reagiereAufAenderung()
+                    {
+                        setzeAusgewaehlteVorstellung();
+                    }
+                });
     }
 
     /**
@@ -121,26 +146,5 @@ public class KassenWerkzeug implements Observer
     private Vorstellung getAusgewaehlteVorstellung()
     {
         return _vorstellungAuswaehlWerkzeug.getAusgewaehlteVorstellung();
-    }
-
-    /**
-     * Nimmt eine Änderung wahr und reagiert entsprechend auf diese
-     *
-     * @param obj das Exemplar auf welches reagiert werden soll
-     *
-     * @require obj != null
-     */
-    @Override
-    public void update(Object obj) {
-
-        assert obj != null : "Vorbedingung verletzt: null";
-
-        if(obj == _datumAuswaehlWerkzeug) {
-            setzeTagesplanFuerAusgewaehltesDatum();
-        }
-        else if(obj == _vorstellungAuswaehlWerkzeug) {
-            setzeAusgewaehlteVorstellung();
-        }
-
     }
 }

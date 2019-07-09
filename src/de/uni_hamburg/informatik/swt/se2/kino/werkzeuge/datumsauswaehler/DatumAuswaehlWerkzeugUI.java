@@ -15,7 +15,7 @@ import javax.swing.SwingConstants;
  * Die GUI des {@link DatumAuswaehlWerkzeug}.
  * 
  * @author SE2-Team
- * @version SoSe 2018
+ * @version SoSe 2016
  */
 class DatumAuswaehlWerkzeugUI
 {
@@ -45,21 +45,26 @@ class DatumAuswaehlWerkzeugUI
 
         _datumLabel = new JLabel(startDatumString, SwingConstants.CENTER);
 
-        panel.add(_datumLabel, new GridBagConstraints(0, 0, 2, 1, 1.0, 0.0,
-                GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(
-                        2, 0, 2, 0), 0, 0));
+        GridBagConstraints constraints = new GridBagConstraints(0, 0, 2, 1,
+                1.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH,
+                new Insets(2, 0, 2, 0), 0, 0);
+        panel.add(_datumLabel, constraints);
 
         Icon zurueckIcon = new ImageIcon("images/go-previous.png");
         _zurueckButton = new JButton(zurueckIcon);
-        panel.add(_zurueckButton, new GridBagConstraints(0, 1, 1, 1, 1.0, 0.0,
+
+        constraints = new GridBagConstraints(0, 1, 1, 1, 1.0, 0.0,
                 GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL,
-                new Insets(2, 0, 2, 5), 0, 0));
+                new Insets(2, 0, 2, 5), 0, 0);
+        panel.add(_zurueckButton, constraints);
 
         Icon weiterIcon = new ImageIcon("images/go-next.png");
         _weiterButton = new JButton(weiterIcon);
-        panel.add(_weiterButton, new GridBagConstraints(1, 1, 1, 1, 1.0, 0.0,
+
+        constraints = new GridBagConstraints(1, 1, 1, 1, 1.0, 0.0,
                 GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL,
-                new Insets(2, 5, 2, 0), 0, 0));
+                new Insets(2, 5, 2, 0), 0, 0);
+        panel.add(_weiterButton, constraints);
 
         return panel;
     }

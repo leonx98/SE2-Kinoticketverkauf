@@ -5,7 +5,7 @@ package de.uni_hamburg.informatik.swt.se2.kino.fachwerte;
  * Reihe und dem Sitz in dieser Reihe.
  * 
  * @author SE2-Team
- * @version SoSe 2018
+ * @version SoSe 2016
  */
 public final class Platz
 {
@@ -15,17 +15,24 @@ public final class Platz
     /**
      * Wählt einen Platz aus.
      * 
-     * @param reihe die Sitzreihe.
-     * @param sitz die Nummer des Sitzes in seiner Sitzreihe.
+     * @param reihe
+     *            die Sitzreihe.
+     * @param sitz
+     *            die Nummer des Sitzes in seiner Sitzreihe.
      * 
-     * @require reihe >=0
+     * @require reihe >= 0
      * @require sitz >= 0
      */
-    public Platz(int reihe, int sitz)
+    public static Platz get(int reihe, int sitz)
     {
-        assert reihe >= 0 : "Vorbedingung verletzt: reihe <=0";
-        assert sitz >= 0 : "Vorbedingung verletzt: sitz <=0";
+        assert reihe >= 0 : "Vorbedingung verletzt: reihe >= 0";
+        assert sitz >= 0 : "Vorbedingung verletzt: sitz >= 0";
 
+        return new Platz(reihe, sitz);
+    }
+
+    private Platz(int reihe, int sitz)
+    {
         _reihe = reihe;
         _sitz = sitz;
     }
@@ -49,20 +56,18 @@ public final class Platz
     @Override
     public boolean equals(Object o)
     {
-        boolean ergebnis = false;
-        if (o instanceof Platz)
-        {
-            Platz platz = (Platz) o;
-            ergebnis = ((platz.getReihe() == this.getReihe()) && (platz
-                    .getSitz() == this.getSitz()));
-        }
-        return ergebnis;
+        return (o instanceof Platz) && equals((Platz) o);
+    }
+
+    private boolean equals(Platz andererPlatz)
+    {
+        return (_reihe == andererPlatz._reihe) && (_sitz == andererPlatz._sitz);
     }
 
     @Override
     public int hashCode()
     {
-        return 1000 * getReihe() + getSitz();
+        return 10007 * _reihe + _sitz;
     }
 
     @Override

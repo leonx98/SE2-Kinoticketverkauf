@@ -7,14 +7,15 @@ import java.util.EventListener;
  * wird.
  * 
  * @author SE2-Team
- * @version SoSe 2018
+ * @version SoSe 2016
  */
 interface PlatzSelectionListener extends EventListener
 {
     /**
      * Wird aufgerufen, wenn sich die Auswahl geändert hat.
      * 
-     * @param event das Event, das die Änderung beschreibt.
+     * @param event
+     *            das Event, das die Änderung beschreibt.
      */
     void auswahlGeaendert(PlatzSelectionEvent event);
 }

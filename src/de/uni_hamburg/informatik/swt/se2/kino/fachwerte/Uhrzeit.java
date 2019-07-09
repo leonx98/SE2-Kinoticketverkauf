@@ -4,29 +4,42 @@ package de.uni_hamburg.informatik.swt.se2.kino.fachwerte;
  * Eine Uhrzeit, angegeben in Stunden und Minuten.
  * 
  * @author SE2-Team
- * @version SoSe 2018
+ * @version SoSe 2016
  */
 public final class Uhrzeit implements Comparable<Uhrzeit>
 {
+    private static final int MINUTEN_PRO_TAG = 24 * 60;
+    
     private final int _stunden;
     private final int _minuten;
-
+    
     /**
      * Wählt eine Uhrzeit aus.
      * 
      * @param stunden der Stundenanteil der Uhrzeit.
      * @param minuten der Minutenanteil der Uhrzeit.
+     * @require istGueltig(stunden, minuten)
      * 
-     * @require stunden >= 0 && stunden < 24
-     * @require minuten >= 0 && minuten < 60
      * @ensure getStunden() == stunden
      * @ensure getMinuten() == minuten
      */
-    public Uhrzeit(int stunden, int minuten)
+    public static Uhrzeit get(int stunden, int minuten)
     {
-        assert (stunden >= 0) && (stunden < 24) : "Vorbedingung verletzt: stunden >= 0 && stunden < 24";
-        assert (minuten >= 0) && (minuten < 60) : "Vorbedingung verletzt: minuten >= 0 && minuten < 60";
+        assert istGueltig(stunden, minuten) : "Vorbedingung verletzt: istGueltig(stunden, minuten)";
 
+        return new Uhrzeit(stunden, minuten);
+    }
+
+    /**
+     * Prüft, ob die übergebenen Stunden im Bereich 0..23 liegen und die übergebenen Minuten im Bereich 0..59
+     */
+    public static boolean istGueltig(int stunden, int minuten)
+    {
+        return (stunden >= 0) && (stunden < 24) && (minuten >= 0) && (minuten < 60);
+    }
+
+    private Uhrzeit(int stunden, int minuten)
+    {
         _stunden = stunden;
         _minuten = minuten;
     }
@@ -38,8 +51,6 @@ public final class Uhrzeit implements Comparable<Uhrzeit>
      */
     public int getStunden()
     {
-        assert (_stunden >= 0) && (_stunden < 24) : "Nachbedingung verletzt: (result >= 0) && (result < 24)";
-
         return _stunden;
     }
 
@@ -50,8 +61,6 @@ public final class Uhrzeit implements Comparable<Uhrzeit>
      */
     public int getMinuten()
     {
-        assert (_minuten >= 0) && (_minuten < 60) : "Nachbedingung verletzt: (result >= 0) && (result < 60)";
-
         return _minuten;
     }
 
@@ -61,37 +70,32 @@ public final class Uhrzeit implements Comparable<Uhrzeit>
      * angenommen, dass der Zeitraum über Mitternacht geht. Wenn die Startzeit
      * gleich dieser Uhrzeit ist, wird Null zurückgegeben.
      * 
-     * @param startzeit die Startzeit.
+     * @param start die Startzeit.
      * 
-     * @require startzeit != null
+     * @require start != null
      * @ensure result >= 0
      */
-    public int minutenSeit(Uhrzeit startzeit)
+    public int minutenSeit(Uhrzeit start)
     {
-        assert startzeit != null : "Vorbedingung verletzt: startzeit != null";
+        assert start != null : "Vorbedingung verletzt: start != null";
 
-        boolean amSelbenTag = (_stunden > startzeit._stunden)
-                || ((_stunden == startzeit._stunden) && (_minuten >= startzeit._minuten));
-
-        Uhrzeit u2 = amSelbenTag ? this : startzeit;
-        Uhrzeit u1 = amSelbenTag ? startzeit : this;
-
-        int result = (u2._stunden - u1._stunden) * 60 + u2._minuten
-                - u1._minuten;
-
-        if (!amSelbenTag)
+        int differenz = this.minutenSeitMitternacht() - start.minutenSeitMitternacht();
+        if (differenz < 0)
         {
-            result = 24 * 60 - result;
+            differenz += MINUTEN_PRO_TAG;
         }
-
-        assert result >= 0 : "Nachbedingung verletzt: result >= 0";
-        return result;
+        return differenz;
     }
 
+    private int minutenSeitMitternacht()
+    {
+        return _stunden * 60 + _minuten;
+    }
+    
     @Override
     public int compareTo(Uhrzeit u)
     {
-        return (_stunden - u._stunden) * 60 + _minuten - u._minuten;
+        return this.minutenSeitMitternacht() - u.minutenSeitMitternacht();
     }
 
     /**
@@ -101,19 +105,18 @@ public final class Uhrzeit implements Comparable<Uhrzeit>
     @Override
     public boolean equals(Object o)
     {
-        boolean ergebnis = false;
-        if (o instanceof Uhrzeit)
-        {
-            Uhrzeit u = (Uhrzeit) o;
-            ergebnis = (_stunden == u._stunden) && (_minuten == u._minuten);
-        }
-        return ergebnis;
+        return (o instanceof Uhrzeit) && equals((Uhrzeit)o);
+    }
+    
+    private boolean equals(Uhrzeit andereUhrzeit)
+    {
+        return (_stunden == andereUhrzeit._stunden) && (_minuten == andereUhrzeit._minuten);
     }
 
     @Override
     public int hashCode()
     {
-        return toString().hashCode();
+        return minutenSeitMitternacht();
     }
 
     @Override
@@ -129,11 +132,6 @@ public final class Uhrzeit implements Comparable<Uhrzeit>
      */
     public String getFormatiertenString()
     {
-        String result = _stunden + ":";
-        if (_minuten < 10)
-        {
-            result = result + "0";
-        }
-        return result + _minuten;
+        return String.format("%02d:%02d", _stunden, _minuten);
     }
 }

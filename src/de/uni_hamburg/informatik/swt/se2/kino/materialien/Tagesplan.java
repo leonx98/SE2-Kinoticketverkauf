@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-
 import de.uni_hamburg.informatik.swt.se2.kino.fachwerte.Datum;
 
 /**
@@ -12,7 +11,7 @@ import de.uni_hamburg.informatik.swt.se2.kino.fachwerte.Datum;
  * bestimmten Tag laufen.
  * 
  * @author SE2-Team
- * @version SoSe 2018
+ * @version SoSe 2016
  */
 public class Tagesplan
 {
@@ -39,7 +38,8 @@ public class Tagesplan
     /**
      * Initialisiert einen neuen, leeren Tagesplan.
      * 
-     * @param tag der Tag.
+     * @param tag
+     *            der Tag.
      * 
      * @require tag != null
      */
@@ -64,7 +64,8 @@ public class Tagesplan
     /**
      * Fügt diesem Tagesplan eine Vorstellung hinzu.
      * 
-     * @param v die Vorstellung.
+     * @param v
+     *            die Vorstellung.
      * 
      * @require v != null
      * @require die Vorstellung laeuft an dem Tag dieses Tagesplans
